@@ -5,6 +5,12 @@ const User = mongoose.model("User");
 
 const router = express.Router();
 
+/*
+@type     -   POST
+@route    -   /signup
+@desc     -   Endpoint to singup with a new email and password
+@access   -   public
+*/
 router.post("/signup", async (req, res) => {
   const { email, password } = req.body;
 
@@ -19,6 +25,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+/*
+@type     -   POST
+@route    -   /signup
+@desc     -   Endpoint to sigin with an existing email and password
+@access   -   public
+*/
 router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
