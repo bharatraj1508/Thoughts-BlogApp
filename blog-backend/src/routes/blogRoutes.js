@@ -14,8 +14,8 @@ router.use(requireAuth);
 @desc     -   It will return all "blogs" which has been created by all the users
 @access   -   private
 */
-router.get("/blogs-all-user", (req, res) => {
-  Blog.find()
+router.get("/blogs-all-user", async (req, res) => {
+  await Blog.find()
     .then((blogs) => {
       if (blogs.length > 0) {
         res.status(200).send(blogs);
@@ -35,8 +35,8 @@ router.get("/blogs-all-user", (req, res) => {
               user id will be provided as req.query in the URL
 @access   -   private
 */
-router.get("/blogs-by-user", (req, res) => {
-  Blog.find({ userId: req.user._id })
+router.get("/blogs-by-user", async (req, res) => {
+  await Blog.find({ userId: req.user._id })
     .then((blogs) => {
       if (blogs.length > 0) {
         res.status(200).send(blogs);
@@ -55,11 +55,11 @@ router.get("/blogs-by-user", (req, res) => {
 @desc     -   It will add a new blog created by the user to the collection.
 @access   -   private
 */
-router.post("/add-blog", (req, res) => {
-  const { title, content } = req.body;
-  const blog = new Blog({ title, content, userId: req.user._id });
+router.post("/add-blog", async (req, res) => {
+  const { title, content, category } = req.body;
+  const blog = new Blog({ title, content, category, userId: req.user._id });
 
-  blog
+  await blog
     .save()
     .then((savedBlog) => {
       res.status(200).send(savedBlog);
@@ -76,8 +76,8 @@ router.post("/add-blog", (req, res) => {
               Must provide _id of the user model
 @access   -   private
 */
-router.delete("/delete-blog", (req, res) => {
-  Blog.findOne({ _id: req.query.id })
+router.delete("/delete-blog", async (req, res) => {
+  await Blog.findOne({ _id: req.query.id })
     .then((blog) => {
       if (blog) {
         return Blog.deleteOne({ _id: req.query.id });
@@ -100,11 +100,11 @@ router.delete("/delete-blog", (req, res) => {
               Must provide _id of the user model
 @access   -   private
 */
-router.put("/update-blog", (req, res) => {
+router.put("/update-blog", async (req, res) => {
   const { title, content } = req.body;
   const blogId = req.query.id;
 
-  Blog.findOne({ _id: blogId })
+  await Blog.findOne({ _id: blogId })
     .then((blog) => {
       if (blog) {
         return Blog.updateOne(
@@ -120,6 +120,33 @@ router.put("/update-blog", (req, res) => {
     })
     .then((blog) => {
       res.status(200).json(blog);
+    })
+    .catch((err) => {
+      res.status(500).send({ error: err.message });
+    });
+});
+
+/*
+@type     -   GET
+@route    -   /search-blog
+@desc     -   it will search all the blogs based upon the
+              title or category provided.
+@access   -   private
+*/
+router.get("/search-blog", async (req, res) => {
+  const searchTerm = req.query.search;
+  await Blog.find({
+    $or: [
+      { title: { $regex: searchTerm, $options: "i" } },
+      { category: { $regex: searchTerm, $options: "i" } },
+    ],
+  })
+    .then((blogs) => {
+      if (blogs) {
+        res.status(200).json(blogs);
+      } else {
+        throw new Error("Blogs not found");
+      }
     })
     .catch((err) => {
       res.status(500).send({ error: err.message });

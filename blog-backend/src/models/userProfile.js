@@ -1,24 +1,27 @@
 const mongoose = require("mongoose");
 
-// Defining the blog schema
-const blogSchema = new mongoose.Schema({
+const profileSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  title: {
+  firstName: {
     type: String,
     required: true,
   },
-  content: {
+  lastName: {
+    type: String,
+    require: true,
+  },
+  email: {
     type: String,
     required: true,
   },
-  category: {
-    type: String,
-    default: "any",
+  dob: {
+    type: Date,
+    required: true,
   },
 });
 
 // Creating the Blog model
-mongoose.model("Blog", blogSchema);
+mongoose.model("UserProfile", profileSchema);

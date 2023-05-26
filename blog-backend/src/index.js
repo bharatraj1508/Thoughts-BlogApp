@@ -1,6 +1,8 @@
 // Importing required models
 require("./models/user");
 require("./models/blog");
+require("./models/userProfile");
+
 require("dotenv").config();
 
 const express = require("express");
@@ -8,6 +10,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/authRoutes");
 const blogRoutes = require("./routes/blogRoutes");
+const userProfileRoutes = require("./routes/userProfileRoutes");
 const requireAuth = require("./middlewares/requireAuth");
 
 const app = express();
@@ -20,6 +23,9 @@ app.use(authRoutes);
 
 // Registering blog routes
 app.use(blogRoutes);
+
+// Registering user profile routes
+app.use(userProfileRoutes);
 
 // MongoDB connection URI
 const mongoUri = process.env.MONGO_URI;
