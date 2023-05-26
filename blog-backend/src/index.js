@@ -1,6 +1,7 @@
 // Importing required models
 require("./models/user");
 require("./models/blog");
+require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -21,8 +22,7 @@ app.use(authRoutes);
 app.use(blogRoutes);
 
 // MongoDB connection URI
-const mongoUri =
-  "mongodb+srv://bharatraj07:Snappy150897@cluster0.6va19gp.mongodb.net/Thoughts-BlogApp";
+const mongoUri = process.env.MONGO_URI;
 
 // Connecting to MongoDB
 mongoose.connect(mongoUri);
