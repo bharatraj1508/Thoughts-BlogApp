@@ -18,6 +18,10 @@ const blogSchema = new mongoose.Schema({
     type: String,
     default: "any",
   },
+  author: {
+    type: String,
+    required: true,
+  },
 });
 
 // Creating the Blog model

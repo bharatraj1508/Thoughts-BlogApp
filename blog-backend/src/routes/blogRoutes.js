@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const requireAuth = require("../middlewares/requireAuth");
 
 const Blog = mongoose.model("Blog");
+const Profile = mongoose.model("UserProfile");
 
 const router = express.Router();
 
@@ -57,7 +58,22 @@ router.get("/blogs-by-user", async (req, res) => {
 */
 router.post("/add-blog", async (req, res) => {
   const { title, content, category } = req.body;
-  const blog = new Blog({ title, content, category, userId: req.user._id });
+  let name = null;
+  await Profile.findOne({ userId: req.user._id }, { firstName: 1, lastName: 1 })
+    .then((UserName) => {
+      name = `${UserName.firstName} ${UserName.lastName}`;
+    })
+    .catch((err) => {
+      res.status(404).send({ error: err.message });
+    });
+
+  const blog = new Blog({
+    title,
+    content,
+    category,
+    userId: req.user._id,
+    author: name,
+  });
 
   await blog
     .save()
@@ -77,7 +93,9 @@ router.post("/add-blog", async (req, res) => {
 @access   -   private
 */
 router.delete("/delete-blog", async (req, res) => {
-  await Blog.findOne({ _id: req.query.id })
+  await Blog.findOne({
+    $and: [{ _id: req.query.id }, { userId: req.user._id }],
+  })
     .then((blog) => {
       if (blog) {
         return Blog.deleteOne({ _id: req.query.id });
@@ -104,7 +122,9 @@ router.put("/update-blog", async (req, res) => {
   const { title, content } = req.body;
   const blogId = req.query.id;
 
-  await Blog.findOne({ _id: blogId })
+  await Blog.findOne({
+    $and: [{ _id: blogId }, { userId: req.user._id }],
+  })
     .then((blog) => {
       if (blog) {
         return Blog.updateOne(
