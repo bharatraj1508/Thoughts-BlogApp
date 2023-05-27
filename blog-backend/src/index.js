@@ -3,8 +3,6 @@ require("./models/user");
 require("./models/blog");
 require("./models/userProfile");
 
-require("dotenv").config();
-
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -28,7 +26,8 @@ app.use(blogRoutes);
 app.use(userProfileRoutes);
 
 // MongoDB connection URI
-const mongoUri = process.env.MONGO_URI;
+const mongoUri =
+  "mongodb+srv://bharatraj07:Snappy150897@cluster0.6va19gp.mongodb.net/Thoughts-BlogApp";
 
 // Connecting to MongoDB
 mongoose.connect(mongoUri);
