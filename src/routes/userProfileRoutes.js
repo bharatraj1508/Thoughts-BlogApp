@@ -109,28 +109,22 @@ router.put("/update-profile-info", async (req, res) => {
 @access   -   private
 */
 router.delete("/delete-profile-info", async (req, res) => {
-  const userId = req.user._id;
+  try {
+    const userId = req.user._id;
 
-  await Profile.findOne({ userId: userId })
-    .then((user) => {
-      if (user) {
-        return Profile.deleteOne({ userId: userId });
-      } else {
-        throw new Error("User does not exist");
-      }
-    })
-    .then(() => {
-      return User.deleteOne({ _id: userId });
-    })
-    .then(() => {
-      return Blog.deleteMany({ userId: userId });
-    })
-    .then(() => {
-      res.status(200).send("Deleted Successfully");
-    })
-    .catch((err) => {
-      res.status(500).send({ error: err.message });
-    });
+    const user = await Profile.findOne({ userId: userId });
+    if (!user) {
+      throw new Error("User does not exist");
+    }
+
+    await Profile.deleteOne({ userId: userId });
+    await User.deleteOne({ _id: userId });
+    await Blog.deleteMany({ userId: userId });
+
+    res.status(200).send("Deleted Successfully");
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
 });
 
 module.exports = router;
