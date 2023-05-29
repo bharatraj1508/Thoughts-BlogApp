@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const requireAuth = require("../middlewares/requireAuth");
+const checkUserExist = require("../middlewares/checkUser");
 
 const Blog = mongoose.model("Blog");
 const Profile = mongoose.model("UserProfile");
@@ -8,6 +9,7 @@ const Profile = mongoose.model("UserProfile");
 const router = express.Router();
 
 router.use(requireAuth);
+router.use(checkUserExist);
 
 /*
 @type     -   GET
