@@ -4,6 +4,7 @@ const requireAuth = require("../middlewares/requireAuth");
 
 const Profile = mongoose.model("UserProfile");
 const User = mongoose.model("User");
+const Blog = mongoose.model("Blog");
 
 const router = express.Router();
 
@@ -17,17 +18,22 @@ router.use(requireAuth);
 @access   -   private
 */
 router.get("/get-profile-info", async (req, res) => {
-  await Profile.findOne({ userId: req.user._id })
-    .then((user) => {
-      if (user) {
-        res.status(200).send(user);
-      } else {
-        throw new Error("User does not exist");
-      }
-    })
-    .catch((err) => {
-      res.status(422).send({ error: err.message });
-    });
+  const userId = req.user._id;
+  if (userId != null) {
+    await Profile.findOne({ userId: req.user._id })
+      .then((user) => {
+        if (user) {
+          res.status(200).send(user);
+        } else {
+          throw new Error("User does not exist");
+        }
+      })
+      .catch((err) => {
+        res.status(422).send({ error: err.message });
+      });
+  } else {
+    res.status(422).json({ error: "User does not exist" });
+  }
 });
 
 /*
@@ -117,6 +123,9 @@ router.delete("/delete-profile-info", async (req, res) => {
     })
     .then(() => {
       return User.deleteOne({ _id: userId });
+    })
+    .then(() => {
+      return Blog.deleteMany({ userId: userId });
     })
     .then(() => {
       res.status(200).send("Deleted Successfully");
