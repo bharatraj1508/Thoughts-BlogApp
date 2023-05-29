@@ -18,6 +18,9 @@ router.use(requireAuth);
 @access   -   private
 */
 router.get("/get-profile-info", async (req, res) => {
+  if (!req.user) {
+    return res.status(404).send({ error: "User does not exist anymore." });
+  }
   await Profile.findOne({ userId: req.user._id })
     .then((user) => {
       if (user) {
