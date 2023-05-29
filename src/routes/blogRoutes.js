@@ -11,6 +11,27 @@ router.use(requireAuth);
 
 /*
 @type     -   GET
+@route    -   /blog
+@desc     -   It will return a single "blog" which has been created by any the users
+@access   -   private
+*/
+router.get("/blog", async (req, res) => {
+  const blogId = req.query.id;
+  await Blog.find({ _id: blogId })
+    .then((blogs) => {
+      if (blogs.length > 0) {
+        res.status(200).send(blogs);
+      } else {
+        res.status(200).json({ message: "No records found" });
+      }
+    })
+    .catch((err) => {
+      res.status(404).send({ error: err.message });
+    });
+});
+
+/*
+@type     -   GET
 @route    -   /blogs-all-user
 @desc     -   It will return all "blogs" which has been created by all the users
 @access   -   private
