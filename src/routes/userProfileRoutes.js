@@ -18,22 +18,17 @@ router.use(requireAuth);
 @access   -   private
 */
 router.get("/get-profile-info", async (req, res) => {
-  const userId = req.user._id;
-  if (userId != null) {
-    await Profile.findOne({ userId: req.user._id })
-      .then((user) => {
-        if (user) {
-          res.status(200).send(user);
-        } else {
-          throw new Error("User does not exist");
-        }
-      })
-      .catch((err) => {
-        res.status(422).send({ error: err.message });
-      });
-  } else {
-    res.status(422).json({ error: "User does not exist" });
-  }
+  await Profile.findOne({ userId: req.user._id })
+    .then((user) => {
+      if (user) {
+        res.status(200).send(user);
+      } else {
+        throw new Error("User does not exist");
+      }
+    })
+    .catch((err) => {
+      res.status(422).send({ error: err.message });
+    });
 });
 
 /*
