@@ -116,6 +116,9 @@ router.delete("/delete-profile-info", async (req, res) => {
       }
     })
     .then(() => {
+      return User.deleteOne({ _id: userId });
+    })
+    .then(() => {
       res.status(200).send("Deleted Successfully");
     })
     .catch((err) => {
