@@ -10,8 +10,12 @@ const authRoutes = require("./routes/authRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const userProfileRoutes = require("./routes/userProfileRoutes");
 const requireAuth = require("./middlewares/requireAuth");
+const cors = require('cors')
 
 const app = express();
+
+//Middleware for allowing cross-origin HTTP requests
+app.use(cors())
 
 // Middleware for parsing JSON requests
 app.use(bodyParser.json());
