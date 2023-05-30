@@ -18,7 +18,7 @@ router.use(checkUserExist);
 @desc     -   It will return a single "blog" which has been created by any the users
 @access   -   private
 */
-router.get("/blog", checkProfileExist, async (req, res) => {
+router.get("/blog", async (req, res) => {
   const blogId = req.query.id;
   await Blog.find({ _id: blogId })
     .then((blogs) => {
@@ -39,7 +39,7 @@ router.get("/blog", checkProfileExist, async (req, res) => {
 @desc     -   It will return all "blogs" which has been created by all the users
 @access   -   private
 */
-router.get("/blogs-all-user", checkProfileExist, async (req, res) => {
+router.get("/blogs-all-user", async (req, res) => {
   await Blog.find()
     .then((blogs) => {
       if (blogs.length > 0) {
@@ -60,7 +60,7 @@ router.get("/blogs-all-user", checkProfileExist, async (req, res) => {
               user id will be provided as req.query in the URL
 @access   -   private
 */
-router.get("/blogs-by-user", checkProfileExist, async (req, res) => {
+router.get("/blogs-by-user", async (req, res) => {
   await Blog.find({ userId: req.user._id })
     .then((blogs) => {
       if (blogs.length > 0) {
