@@ -177,7 +177,7 @@ router.put("/update-blog", checkProfileExist, async (req, res) => {
               title or category provided.
 @access   -   private
 */
-router.get("/search-blog", checkProfileExist, async (req, res) => {
+router.get("/search-blog", async (req, res) => {
   const searchTerm = req.query.search;
   await Blog.find({
     $or: [
