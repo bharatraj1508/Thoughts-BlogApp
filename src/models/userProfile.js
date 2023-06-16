@@ -7,11 +7,9 @@ const profileSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: true,
   },
   lastName: {
     type: String,
-    require: true,
   },
   email: {
     type: String,
@@ -19,7 +17,6 @@ const profileSchema = new mongoose.Schema({
   },
   dob: {
     type: Date,
-    required: true,
   },
 });
 
