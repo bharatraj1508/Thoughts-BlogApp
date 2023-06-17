@@ -97,6 +97,7 @@ router.post("/add-blog", checkProfileExist, async (req, res) => {
     category,
     userId: req.user._id,
     author: name,
+    creationDate: new Date(),
   });
 
   await blog

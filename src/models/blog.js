@@ -22,6 +22,10 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  creationDate: {
+    type: Date,
+    required: true,
+  },
 });
 
 // Creating the Blog model
