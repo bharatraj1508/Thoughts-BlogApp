@@ -66,7 +66,7 @@ router.get("/blogs-by-user", async (req, res) => {
       if (blogs.length > 0) {
         res.status(200).send(blogs);
       } else {
-        res.status(404).json({ message: "No records found" });
+        res.status(200).json({ message: "No records found" });
       }
     })
     .catch((err) => {
