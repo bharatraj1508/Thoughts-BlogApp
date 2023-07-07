@@ -26,6 +26,10 @@ const blogSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  favorite: {
+    type: Boolean,
+    default: false
+  }
 });
 
 // Creating the Blog model

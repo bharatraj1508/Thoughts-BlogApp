@@ -18,6 +18,9 @@ const profileSchema = new mongoose.Schema({
   dob: {
     type: Date,
   },
+  favorites: [{
+    type: String
+  }]
 });
 
 // Creating the Blog model

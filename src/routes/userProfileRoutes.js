@@ -126,4 +126,58 @@ router.delete("/delete-profile-info", async (req, res) => {
   }
 });
 
+/*
+@type     -   PUT
+@route    -   /set-favorite-blog
+@desc     -   it will set a blog as favorite or not based upon the
+              blog id.
+@access   -   private
+*/
+router.put("/set-favorite-blog", async (req, res) => {
+  const userId = req.user._id; // User ID
+  const blogId = req.body._id; // Blog ID
+
+  try {
+    const userProfile = await Profile.findOne({ userId: userId }); // Find user by ID
+
+    if (!userProfile) {
+      throw new Error("User Profile not found");
+    }
+
+    const blog = await Blog.findOne({ _id: blogId });
+
+    if (!blog) {
+      throw new Error("Blog not found");
+    }
+
+    //Adding or removing the blog to or from user's favorites array
+    const favoritesIndex = userProfile.favorites.indexOf(blog._id);
+
+    if (favoritesIndex!==-1) {
+      // Blog is already in favorites, so remove it
+      userProfile.favorites.splice(favoritesIndex, 1);
+    } else {
+      // Blog is not in favorites, so add it
+      userProfile.favorites.push(blog._id);
+    }
+    
+    await userProfile.save(); // Save the updated user
+    
+    //Updating the favorite status of the blog
+    const isFavorite = userProfile.favorites.includes(blogId);
+    await Blog.updateOne(
+      { _id: blogId}, // Find the blog by ID
+      { favorite: isFavorite } // Update the favorite field
+    ).catch((err) => {
+      res.status(500).send({ error: err.message });
+    });
+    
+    const b = await Blog.findOne({ _id: blogId })
+    res.status(200).json(b);
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+})
+
+
 module.exports = router;

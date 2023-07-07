@@ -40,17 +40,38 @@ router.get("/blog", async (req, res) => {
 @access   -   private
 */
 router.get("/blogs-all-user", async (req, res) => {
-  await Blog.find()
-    .then((blogs) => {
-      if (blogs.length > 0) {
-        res.status(200).send(blogs);
-      } else {
-        res.status(200).json({ message: "No records found" });
-      }
-    })
-    .catch((err) => {
-      res.status(404).send({ error: err.message });
-    });
+
+  const userId = req.user._id;
+
+  try {
+    const userProfile = await Profile.findOne({ userId: userId }); // Find user by ID
+    if (!userProfile) {
+      throw new Error("User Profile not found");
+    }
+
+    const blogs = await Blog.find() // Retrieve all blogs
+
+    // Loop through the blogs and update the favorite status for the current user
+    for (let i = 0; i < blogs.length; i++) {
+      const blogId = blogs[i]._id;
+
+      const isFavorite = userProfile.favorites.includes(blogId);
+        await Blog.updateOne(
+          { _id: blogs[i]._id }, // Find the blog by ID
+          { favorite: isFavorite } // Update the favorite field
+        ).catch((err) => {
+          res.status(500).send({ error: err.message });
+        });
+    }
+
+    if (blogs.length > 0) {
+      res.status(200).send(blogs);
+    } else {
+      res.status(200).json({ message: "No records found" });
+    }
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
 });
 
 /*
@@ -98,6 +119,7 @@ router.post("/add-blog", checkProfileExist, async (req, res) => {
     userId: req.user._id,
     author: name,
     creationDate: new Date(),
+    favorite: false,
   });
 
   await blog
