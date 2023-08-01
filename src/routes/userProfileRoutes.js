@@ -120,7 +120,7 @@ router.delete("/delete-profile-info", async (req, res) => {
     await User.deleteOne({ _id: userId });
     await Blog.deleteMany({ userId: userId });
 
-    res.status(200).send("Deleted Successfully");
+    res.status(200).send({ message: "Delete Successfully" });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -153,31 +153,30 @@ router.put("/set-favorite-blog", async (req, res) => {
     //Adding or removing the blog to or from user's favorites array
     const favoritesIndex = userProfile.favorites.indexOf(blog._id);
 
-    if (favoritesIndex!==-1) {
+    if (favoritesIndex !== -1) {
       // Blog is already in favorites, so remove it
       userProfile.favorites.splice(favoritesIndex, 1);
     } else {
       // Blog is not in favorites, so add it
       userProfile.favorites.push(blog._id);
     }
-    
+
     await userProfile.save(); // Save the updated user
-    
+
     //Updating the favorite status of the blog
     const isFavorite = userProfile.favorites.includes(blogId);
     await Blog.updateOne(
-      { _id: blogId}, // Find the blog by ID
+      { _id: blogId }, // Find the blog by ID
       { favorite: isFavorite } // Update the favorite field
     ).catch((err) => {
       res.status(500).send({ error: err.message });
     });
-    
-    const b = await Blog.findOne({ _id: blogId })
+
+    const b = await Blog.findOne({ _id: blogId });
     res.status(200).json(b);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
-})
-
+});
 
 module.exports = router;
